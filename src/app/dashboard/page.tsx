@@ -1,26 +1,30 @@
+"use client"; // Add this directive
+
+import * as React from 'react'; // Import React for useState/useEffect if needed later
 import { AppLayout } from "@/components/layout/app-layout";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import { BarChart, LineChart, PieChart, Users, DollarSign, Activity } from 'lucide-react';
+import { BarChart, LineChart, PieChart, Users, DollarSign, Activity } from 'lucide-react'; // lucide-react icons are fine in client components
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, LineChart as RechartsLineChart, Pie, PieChart as RechartsPieChart, Cell } from 'recharts';
+// Recharts components require client-side rendering
+import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, LineChart as RechartsLineChart, Pie, PieChart as RechartsPieChart, Cell, ResponsiveContainer } from 'recharts';
 
-// Sample data for charts
+// Sample data for charts - Keep static for now, or fetch/generate dynamically client-side if needed
 const barChartData = [
-  { month: 'Jan', value: Math.floor(Math.random() * 1000) },
-  { month: 'Feb', value: Math.floor(Math.random() * 1000) },
-  { month: 'Mar', value: Math.floor(Math.random() * 1000) },
-  { month: 'Apr', value: Math.floor(Math.random() * 1000) },
-  { month: 'May', value: Math.floor(Math.random() * 1000) },
-  { month: 'Jun', value: Math.floor(Math.random() * 1000) },
+  { month: 'Jan', value: 634 },
+  { month: 'Feb', value: 721 },
+  { month: 'Mar', value: 890 },
+  { month: 'Apr', value: 543 },
+  { month: 'May', value: 912 },
+  { month: 'Jun', value: 780 },
 ];
 
 const lineChartData = [
-  { date: '2024-01', value: Math.floor(Math.random() * 500) },
-  { date: '2024-02', value: Math.floor(Math.random() * 500) },
-  { date: '2024-03', value: Math.floor(Math.random() * 500) },
-  { date: '2024-04', value: Math.floor(Math.random() * 500) },
-  { date: '2024-05', value: Math.floor(Math.random() * 500) },
-  { date: '2024-06', value: Math.floor(Math.random() * 500) },
+  { date: '2024-01', value: 320 },
+  { date: '2024-02', value: 450 },
+  { date: '2024-03', value: 380 },
+  { date: '2024-04', value: 490 },
+  { date: '2024-05', value: 510 },
+  { date: '2024-06', value: 460 },
 ];
 
 const pieChartData = [
@@ -33,6 +37,15 @@ const pieChartData = [
 const PIE_COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))'];
 
 export default function DashboardPage() {
+  // If data needs to be dynamic/random on client, use useEffect:
+  // const [barData, setBarData] = React.useState(barChartData);
+  // React.useEffect(() => {
+  //   // Example: Generate random data on mount
+  //   const randomBarData = barChartData.map(item => ({ ...item, value: Math.floor(Math.random() * 1000) }));
+  //   setBarData(randomBarData);
+  // }, []);
+  // Use `barData` instead of `barChartData` below if using state
+
   return (
     <AppLayout>
       <h1 className="text-3xl font-bold mb-6 text-primary">Dashboard Overview</h1>
@@ -71,6 +84,7 @@ export default function DashboardPage() {
          <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Bounce Rate</CardTitle>
+             {/* Use BarChart from lucide-react */}
              <BarChart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -87,14 +101,19 @@ export default function DashboardPage() {
              <CardDescription>Bar chart showing monthly values.</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={{}} className="h-[250px] w-full">
-              <RechartsBarChart data={barChartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
-                <YAxis tickLine={false} axisLine={false} tickMargin={8} />
-                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                <Bar dataKey="value" fill="hsl(var(--primary))" radius={4} />
-              </RechartsBarChart>
+             {/* Ensure ChartContainer wraps Recharts components */}
+            <ChartContainer config={{ value: { label: 'Value', color: 'hsl(var(--primary))' } }} className="h-[250px] w-full">
+               {/* Use ResponsiveContainer for Recharts */}
+              <ResponsiveContainer width="100%" height="100%">
+                <RechartsBarChart data={barChartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
+                  <YAxis tickLine={false} axisLine={false} tickMargin={8} />
+                  {/* Use Recharts Tooltip directly if ChartTooltip causes issues */}
+                  <Tooltip cursor={false} content={<ChartTooltipContent hideLabel indicator="dot" />} />
+                  <Bar dataKey="value" fill="var(--color-value)" radius={4} />
+                </RechartsBarChart>
+              </ResponsiveContainer>
             </ChartContainer>
           </CardContent>
         </Card>
@@ -105,14 +124,16 @@ export default function DashboardPage() {
              <CardDescription>Line chart showing growth over time.</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={{}} className="h-[250px] w-full">
-              <RechartsLineChart data={lineChartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                 <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} />
-                 <YAxis tickLine={false} axisLine={false} tickMargin={8} />
-                 <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                <Line type="monotone" dataKey="value" stroke="hsl(var(--accent))" strokeWidth={2} dot={false} />
-              </RechartsLineChart>
+            <ChartContainer config={{ value: { label: 'Value', color: 'hsl(var(--accent))' } }} className="h-[250px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <RechartsLineChart data={lineChartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                  <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} />
+                  <YAxis tickLine={false} axisLine={false} tickMargin={8} />
+                  <Tooltip cursor={false} content={<ChartTooltipContent hideLabel indicator="line" />} />
+                  <Line type="monotone" dataKey="value" stroke="var(--color-value)" strokeWidth={2} dot={false} />
+                </RechartsLineChart>
+              </ResponsiveContainer>
             </ChartContainer>
           </CardContent>
         </Card>
@@ -123,15 +144,24 @@ export default function DashboardPage() {
             <CardDescription>Pie chart showing category distribution.</CardDescription>
           </CardHeader>
           <CardContent className="flex items-center justify-center">
-             <ChartContainer config={{}} className="h-[250px] w-full">
-                <RechartsPieChart>
-                  <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                  <Pie data={pieChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} labelLine={false} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
-                     {pieChartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
-                    ))}
-                  </Pie>
-                </RechartsPieChart>
+              {/* Prepare config for Pie Chart */}
+              <ChartContainer
+                config={pieChartData.reduce((acc, cur, idx) => {
+                  acc[cur.name] = { label: cur.name, color: PIE_COLORS[idx % PIE_COLORS.length] };
+                  return acc;
+                }, {} as any)} // Use any for simplicity here, define proper type if needed
+                className="h-[250px] w-full"
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <RechartsPieChart>
+                    <Tooltip cursor={false} content={<ChartTooltipContent hideLabel indicator="dot" nameKey="name" />} />
+                    <Pie data={pieChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} labelLine={false} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                      {pieChartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                  </RechartsPieChart>
+                </ResponsiveContainer>
              </ChartContainer>
           </CardContent>
         </Card>
