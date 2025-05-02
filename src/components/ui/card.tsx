@@ -30,10 +30,11 @@ const CardHeader = React.forwardRef<
 CardHeader.displayName = "CardHeader"
 
 const CardTitle = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
+  HTMLHeadingElement, // Changed from HTMLDivElement
+  React.HTMLAttributes<HTMLHeadingElement> // Changed from HTMLDivElement
 >(({ className, ...props }, ref) => (
-  <div
+  // Defaulting to h3, but could be changed via `as` prop if needed later
+  <h3
     ref={ref}
     className={cn(
       "text-2xl font-semibold leading-none tracking-tight",
@@ -45,10 +46,10 @@ const CardTitle = React.forwardRef<
 CardTitle.displayName = "CardTitle"
 
 const CardDescription = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
+  HTMLParagraphElement, // Changed from HTMLDivElement
+  React.HTMLAttributes<HTMLParagraphElement> // Changed from HTMLDivElement
 >(({ className, ...props }, ref) => (
-  <div
+  <p
     ref={ref}
     className={cn("text-sm text-muted-foreground", className)}
     {...props}

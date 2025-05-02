@@ -1,19 +1,24 @@
-import * as React from "react"
+import * as React from "react";
 
-const MOBILE_BREAKPOINT = 768
+const MOBILE_BREAKPOINT = 768;
 
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
+  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined);
 
   React.useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
-    const onChange = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    }
-    mql.addEventListener("change", onChange)
-    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    return () => mql.removeEventListener("change", onChange)
-  }, [])
+    const checkDevice = () => {
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+    };
 
-  return !!isMobile
+    // Initial check after component mounts
+    checkDevice();
+
+    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+    mql.addEventListener("change", checkDevice);
+
+    // Cleanup listener on component unmount
+    return () => mql.removeEventListener("change", checkDevice);
+  }, []); // Empty dependency array ensures this runs only once on mount
+
+  return isMobile === undefined ? false : isMobile; // Return false during SSR or initial client render before state is set
 }

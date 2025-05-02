@@ -9,6 +9,9 @@ export default {
   ],
   theme: {
   	extend: {
+      fontFamily: {
+        sans: ["var(--font-inter)", "sans-serif"], // Use Inter font
+      },
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
