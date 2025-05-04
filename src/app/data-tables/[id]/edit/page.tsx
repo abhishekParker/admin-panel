@@ -32,29 +32,30 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { DataItem } from "@/app/data-tables/page"; // Import the type
 import { Skeleton } from "@/components/ui/skeleton"; // For loading state
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Import Avatar
 
 // Mock Data Function (Replace with actual data fetching)
 const getUserById = (id: string): DataItem | undefined => {
   // Simulate fetching data
    const data: DataItem[] = [
-    { id: "m5gr84i9", name: "John Doe", email: "john.doe@example.com", role: "Admin", status: "Active", createdAt: new Date(2023, 5, 15) },
-    { id: "3u1reuv4", name: "Jane Smith", email: "jane.smith@example.com", role: "User", status: "Active", createdAt: new Date(2023, 6, 20) },
-    { id: "derv1ws0", name: "Bob Johnson", email: "bob.j@sample.net", role: "Editor", status: "Inactive", createdAt: new Date(2024, 0, 1) },
-    { id: "5kma53ae", name: "Alice Brown", email: "alice.b@mail.org", role: "User", status: "Pending", createdAt: new Date(2024, 1, 10) },
-    { id: "bhqecj4p", name: "Charlie Davis", email: "charlie.d@test.co", role: "Admin", status: "Active", createdAt: new Date(2024, 2, 5) },
-    { id: "p2qwef8k", name: "Diana Evans", email: "diana.e@sample.com", role: "User", status: "Active", createdAt: new Date(2024, 3, 12) },
-    { id: "z9xcvbnm", name: "Ethan Garcia", email: "ethan.g@test.net", role: "Editor", status: "Pending", createdAt: new Date(2024, 4, 22) },
+    { id: "m5gr84i9", name: "John Doe", email: "john.doe@example.com", role: "Admin", status: "Active", createdAt: new Date(2023, 5, 15), imageUrl: "https://picsum.photos/id/101/100/100" },
+    { id: "3u1reuv4", name: "Jane Smith", email: "jane.smith@example.com", role: "User", status: "Active", createdAt: new Date(2023, 6, 20), imageUrl: "https://picsum.photos/id/102/100/100" },
+    { id: "derv1ws0", name: "Bob Johnson", email: "bob.j@sample.net", role: "Editor", status: "Inactive", createdAt: new Date(2024, 0, 1), imageUrl: "https://picsum.photos/id/103/100/100" },
+    { id: "5kma53ae", name: "Alice Brown", email: "alice.b@mail.org", role: "User", status: "Pending", createdAt: new Date(2024, 1, 10), imageUrl: "https://picsum.photos/id/104/100/100" },
+    { id: "bhqecj4p", name: "Charlie Davis", email: "charlie.d@test.co", role: "Admin", status: "Active", createdAt: new Date(2024, 2, 5), imageUrl: "https://picsum.photos/id/105/100/100" },
+    { id: "p2qwef8k", name: "Diana Evans", email: "diana.e@sample.com", role: "User", status: "Active", createdAt: new Date(2024, 3, 12), imageUrl: "https://picsum.photos/id/106/100/100" },
+    { id: "z9xcvbnm", name: "Ethan Garcia", email: "ethan.g@test.net", role: "Editor", status: "Pending", createdAt: new Date(2024, 4, 22), imageUrl: "https://picsum.photos/id/107/100/100" },
   ];
   return data.find(item => item.id === id);
 };
 
-// Define a Zod schema for the edit user form (similar to add, might have slight variations)
+// Define a Zod schema for the edit user form
 const editUserSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Invalid email address." }),
   role: z.enum(["Admin", "User", "Editor"]),
   status: z.enum(["Active", "Inactive", "Pending"]),
-  // `createdAt` is usually not editable
+  imageUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal("")), // Optional image URL
 });
 
 type EditUserSchema = z.infer<typeof editUserSchema>;
@@ -66,15 +67,16 @@ export default function EditUserPage() {
   const userId = params.id as string;
   const [loading, setLoading] = React.useState(true);
   const [userNotFound, setUserNotFound] = React.useState(false);
+  const [currentUser, setCurrentUser] = React.useState<DataItem | null>(null); // Store fetched user data
 
   const form = useForm<EditUserSchema>({
     resolver: zodResolver(editUserSchema),
-    // Default values will be set by useEffect after fetching data
     defaultValues: {
       name: "",
       email: "",
       role: "User",
       status: "Pending",
+      imageUrl: "",
     },
   });
 
@@ -85,6 +87,7 @@ export default function EditUserPage() {
       // Simulate API call delay
       setTimeout(() => {
         const fetchedUser = getUserById(userId);
+        setCurrentUser(fetchedUser ?? null); // Store the fetched user
         if (fetchedUser) {
           // Populate form with fetched data
           form.reset({
@@ -92,6 +95,7 @@ export default function EditUserPage() {
             email: fetchedUser.email,
             role: fetchedUser.role,
             status: fetchedUser.status,
+            imageUrl: fetchedUser.imageUrl || "",
           });
         } else {
           console.error("User not found for editing");
@@ -119,27 +123,33 @@ export default function EditUserPage() {
     router.push(`/data-tables/${userId}`); // Redirect back to the view page
   }
 
+   const getInitials = (name?: string) => {
+     return name?.split(' ').map(n => n[0]).join('') || '??';
+   }
+
+   // Watch the imageUrl field to update the avatar preview dynamically
+   const watchedImageUrl = form.watch("imageUrl");
+
   return (
     <AppLayout>
       <Header />
-      <div className="p-4 md:p-6 lg:p-8 w-full"> {/* Added w-full */}
+      <div className="p-4 md:p-6 lg:p-8 w-full"> {/* Ensure full width */}
          <div className="flex items-center justify-between mb-6">
           <Button variant="outline" onClick={() => router.back()} size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back
           </Button>
           <h1 className="text-3xl font-bold text-primary">Edit User</h1>
-          {/* Placeholder for potential actions */}
            <div></div>
         </div>
 
         {userNotFound ? (
-           <Card className="w-full"> {/* Already has w-full */}
+           <Card className="w-full"> {/* Ensure Card takes full width */}
              <CardContent className="p-6 text-center text-muted-foreground">
                User not found or could not be loaded.
              </CardContent>
            </Card>
          ) : (
-            <Card className="w-full"> {/* Already has w-full */}
+            <Card className="w-full"> {/* Ensure Card takes full width */}
               <CardHeader>
                 <CardTitle>Update User Information</CardTitle>
                 <CardDescription>Modify the details for the user.</CardDescription>
@@ -147,6 +157,10 @@ export default function EditUserPage() {
               <CardContent>
                 {loading ? (
                   <div className="space-y-4">
+                    <div className="flex items-center space-x-4">
+                       <Skeleton className="h-16 w-16 rounded-full" />
+                       <Skeleton className="h-10 w-full" /> {/* Placeholder for image URL input */}
+                    </div>
                     <Skeleton className="h-10 w-full" />
                     <Skeleton className="h-10 w-full" />
                     <Skeleton className="h-10 w-1/2" />
@@ -159,6 +173,35 @@ export default function EditUserPage() {
                 ) : (
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+
+                       {/* Avatar and Image URL Field */}
+                       <FormField
+                        control={form.control}
+                        name="imageUrl"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center space-x-4">
+                            <Avatar className="h-16 w-16">
+                              {/* Use watchedImageUrl for dynamic preview */}
+                              {watchedImageUrl ? (
+                                <AvatarImage src={watchedImageUrl} alt={form.getValues("name")} data-ai-hint="user avatar large edit form"/>
+                              ) : currentUser?.imageUrl ? ( // Fallback to originally fetched image
+                                <AvatarImage src={currentUser.imageUrl} alt={currentUser.name} data-ai-hint="user avatar large edit form"/>
+                              ) : null}
+                              <AvatarFallback>{getInitials(form.getValues("name") || currentUser?.name)}</AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1">
+                              <FormLabel>Image URL (Optional)</FormLabel>
+                              <FormControl>
+                                <Input type="url" placeholder="https://example.com/image.jpg" {...field} />
+                              </FormControl>
+                               <FormDescription>Enter a URL for the user's profile picture.</FormDescription>
+                              <FormMessage />
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+
+
                       {/* Name Field */}
                       <FormField
                         control={form.control}

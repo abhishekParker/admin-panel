@@ -40,6 +40,7 @@ import {
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Import Avatar
 
 // Define a Zod schema for the add user form
 const addUserSchema = z.object({
@@ -47,8 +48,7 @@ const addUserSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
   role: z.enum(["Admin", "User", "Editor"]),
   status: z.enum(["Active", "Inactive", "Pending"]),
-  // createdAt will be set automatically, no need in form
-  // Add any other relevant fields for a new user
+  imageUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal("")), // Optional image URL
 });
 
 type AddUserSchema = z.infer<typeof addUserSchema>;
@@ -63,6 +63,7 @@ export default function AddUserPage() {
       email: "",
       role: "User", // Sensible default
       status: "Pending", // Sensible default
+      imageUrl: "",
     },
   });
 
@@ -78,13 +79,21 @@ export default function AddUserPage() {
     router.push("/data-tables"); // Redirect back to the main table page
   }
 
+   const getInitials = (name?: string) => {
+     return name?.split(' ').map(n => n[0]).join('') || '??';
+   }
+
+   // Watch the imageUrl and name fields
+   const watchedImageUrl = form.watch("imageUrl");
+   const watchedName = form.watch("name");
+
   return (
     <AppLayout>
       <Header />
-      <div className="p-4 md:p-6 lg:p-8 w-full"> {/* Added w-full */}
+      <div className="p-4 md:p-6 lg:p-8 w-full"> {/* Ensure full width */}
         <h1 className="text-3xl font-bold mb-6 text-primary">Add New User</h1>
 
-        <Card className="w-full"> {/* Already has w-full */}
+        <Card className="w-full"> {/* Ensure Card takes full width */}
           <CardHeader>
             <CardTitle>User Information</CardTitle>
             <CardDescription>Fill in the details for the new user.</CardDescription>
@@ -92,6 +101,32 @@ export default function AddUserPage() {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+
+                 {/* Avatar and Image URL Field */}
+                 <FormField
+                  control={form.control}
+                  name="imageUrl"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-4">
+                      <Avatar className="h-16 w-16">
+                        {/* Use watchedImageUrl for dynamic preview */}
+                        {watchedImageUrl ? (
+                          <AvatarImage src={watchedImageUrl} alt={watchedName} data-ai-hint="user avatar large add form"/>
+                        ) : null}
+                        <AvatarFallback>{getInitials(watchedName)}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                         <FormLabel>Image URL (Optional)</FormLabel>
+                         <FormControl>
+                           <Input type="url" placeholder="https://example.com/image.jpg" {...field} />
+                         </FormControl>
+                         <FormDescription>Enter a URL for the user's profile picture.</FormDescription>
+                         <FormMessage />
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
                 {/* Name Field */}
                 <FormField
                   control={form.control}

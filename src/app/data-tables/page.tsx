@@ -3,6 +3,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image"; // Import next/image
 import { useRouter } from "next/navigation";
 import {
   ColumnDef,
@@ -50,17 +51,17 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Import Avatar for image display
 
-// Mock Data - In a real app, this would come from an API or state management
-// We need state to handle deletion simulation
+// Mock Data - Add imageUrl
 const initialData: DataItem[] = [
-  { id: "m5gr84i9", name: "John Doe", email: "john.doe@example.com", role: "Admin", status: "Active", createdAt: new Date(2023, 5, 15) },
-  { id: "3u1reuv4", name: "Jane Smith", email: "jane.smith@example.com", role: "User", status: "Active", createdAt: new Date(2023, 6, 20) },
-  { id: "derv1ws0", name: "Bob Johnson", email: "bob.j@sample.net", role: "Editor", status: "Inactive", createdAt: new Date(2024, 0, 1) },
-  { id: "5kma53ae", name: "Alice Brown", email: "alice.b@mail.org", role: "User", status: "Pending", createdAt: new Date(2024, 1, 10) },
-  { id: "bhqecj4p", name: "Charlie Davis", email: "charlie.d@test.co", role: "Admin", status: "Active", createdAt: new Date(2024, 2, 5) },
-  { id: "p2qwef8k", name: "Diana Evans", email: "diana.e@sample.com", role: "User", status: "Active", createdAt: new Date(2024, 3, 12) },
-  { id: "z9xcvbnm", name: "Ethan Garcia", email: "ethan.g@test.net", role: "Editor", status: "Pending", createdAt: new Date(2024, 4, 22) },
+  { id: "m5gr84i9", name: "John Doe", email: "john.doe@example.com", role: "Admin", status: "Active", createdAt: new Date(2023, 5, 15), imageUrl: "https://picsum.photos/id/101/50/50" },
+  { id: "3u1reuv4", name: "Jane Smith", email: "jane.smith@example.com", role: "User", status: "Active", createdAt: new Date(2023, 6, 20), imageUrl: "https://picsum.photos/id/102/50/50" },
+  { id: "derv1ws0", name: "Bob Johnson", email: "bob.j@sample.net", role: "Editor", status: "Inactive", createdAt: new Date(2024, 0, 1), imageUrl: "https://picsum.photos/id/103/50/50" },
+  { id: "5kma53ae", name: "Alice Brown", email: "alice.b@mail.org", role: "User", status: "Pending", createdAt: new Date(2024, 1, 10), imageUrl: "https://picsum.photos/id/104/50/50" },
+  { id: "bhqecj4p", name: "Charlie Davis", email: "charlie.d@test.co", role: "Admin", status: "Active", createdAt: new Date(2024, 2, 5), imageUrl: "https://picsum.photos/id/105/50/50" },
+  { id: "p2qwef8k", name: "Diana Evans", email: "diana.e@sample.com", role: "User", status: "Active", createdAt: new Date(2024, 3, 12), imageUrl: "https://picsum.photos/id/106/50/50" },
+  { id: "z9xcvbnm", name: "Ethan Garcia", email: "ethan.g@test.net", role: "Editor", status: "Pending", createdAt: new Date(2024, 4, 22), imageUrl: "https://picsum.photos/id/107/50/50" },
 ];
 
 export type DataItem = {
@@ -70,6 +71,7 @@ export type DataItem = {
   role: "Admin" | "User" | "Editor";
   status: "Active" | "Inactive" | "Pending";
   createdAt: Date;
+  imageUrl?: string; // Added imageUrl property
 };
 
 // Helper function to get data (simulates fetching)
@@ -86,7 +88,9 @@ export default function DataTablesPage() {
   const [data, setData] = React.useState<DataItem[]>(getData()); // Manage data state
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
+     imageUrl: false, // Hide image URL column by default if needed
+  });
   const [rowSelection, setRowSelection] = React.useState({});
   const [itemToDelete, setItemToDelete] = React.useState<DataItem | null>(null);
 
@@ -131,6 +135,25 @@ export default function DataTablesPage() {
       ),
       enableSorting: false,
       enableHiding: false,
+    },
+     {
+      accessorKey: "imageUrl",
+      header: "Image",
+      cell: ({ row }) => {
+        const imageUrl = row.getValue("imageUrl") as string | undefined;
+        const name = row.getValue("name") as string;
+        const initials = name?.split(' ').map(n => n[0]).join('') || '??';
+        return (
+          <Avatar className="h-8 w-8">
+            {imageUrl ? (
+              <AvatarImage src={imageUrl} alt={name} data-ai-hint="user avatar small table" />
+            ) : null}
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
+        );
+      },
+      enableSorting: false, // Usually don't sort by image
+      enableHiding: true,
     },
     {
       accessorKey: "name",
@@ -242,6 +265,10 @@ export default function DataTablesPage() {
       pagination: {
         pageSize: 5, // Show 5 rows per page initially
       },
+       columnVisibility: { // Initial visibility state
+         imageUrl: true, // Show image column by default
+         // Add other columns you might want to hide/show initially
+       },
     },
     // Add meta object to pass delete handler to the cell renderer if needed elsewhere
     // meta: {
@@ -252,7 +279,7 @@ export default function DataTablesPage() {
   return (
     <AppLayout>
       <Header /> {/* Add Header */}
-      <div className="p-4 md:p-6 lg:p-8"> {/* Add padding */}
+      <div className="p-4 md:p-6 lg:p-8 w-full"> {/* Ensure full width */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-primary">Data Tables</h1>
           <Link href="/data-tables/add" passHref>
@@ -261,7 +288,7 @@ export default function DataTablesPage() {
             </Button>
           </Link>
         </div>
-        <Card>
+        <Card className="w-full"> {/* Ensure Card takes full width */}
           <CardHeader>
             <CardTitle>User Management</CardTitle>
             <CardDescription>View, filter, sort, and manage user data.</CardDescription>
@@ -296,7 +323,8 @@ export default function DataTablesPage() {
                               column.toggleVisibility(!!value)
                             }
                           >
-                            {column.id}
+                            {/* Custom label for imageUrl */}
+                            {column.id === 'imageUrl' ? 'Image' : column.id}
                           </DropdownMenuCheckboxItem>
                         )
                       })}
@@ -401,4 +429,3 @@ export default function DataTablesPage() {
     </AppLayout>
   );
 }
-
