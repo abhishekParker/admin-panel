@@ -84,7 +84,7 @@ export default function AddUserPage() {
       <div className="p-4 md:p-6 lg:p-8">
         <h1 className="text-3xl font-bold mb-6 text-primary">Add New User</h1>
 
-        <Card>
+        <Card className="w-full"> {/* Added w-full */}
           <CardHeader>
             <CardTitle>User Information</CardTitle>
             <CardDescription>Fill in the details for the new user.</CardDescription>

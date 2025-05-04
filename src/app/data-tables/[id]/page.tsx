@@ -80,7 +80,7 @@ export default function ViewUserPage() {
           )}
         </div>
 
-        <Card>
+        <Card className="w-full"> {/* Added w-full */}
           <CardHeader>
             <CardTitle>User Information</CardTitle>
             <CardDescription>Detailed view of the selected user.</CardDescription>
@@ -145,4 +145,3 @@ export default function ViewUserPage() {
     </AppLayout>
   );
 }
-

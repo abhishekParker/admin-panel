@@ -133,13 +133,13 @@ export default function EditUserPage() {
         </div>
 
         {userNotFound ? (
-           <Card>
+           <Card className="w-full"> {/* Added w-full */}
              <CardContent className="p-6 text-center text-muted-foreground">
                User not found or could not be loaded.
              </CardContent>
            </Card>
          ) : (
-            <Card>
+            <Card className="w-full"> {/* Added w-full */}
               <CardHeader>
                 <CardTitle>Update User Information</CardTitle>
                 <CardDescription>Modify the details for the user.</CardDescription>
@@ -269,4 +269,3 @@ export default function EditUserPage() {
     </AppLayout>
   );
 }
-
