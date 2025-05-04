@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Table, ClipboardEdit, Settings, User } from "lucide-react";
+import { LayoutDashboard, Table, ClipboardEdit, Settings, User, LogOut } from "lucide-react"; // Import LogOut
 
 import { cn } from "@/lib/utils";
 import {
@@ -28,6 +28,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation"; // Import useRouter for navigation
 
 interface NavItemProps {
   href: string;
@@ -59,6 +60,14 @@ const NavItem: React.FC<NavItemProps> = ({ href, icon: Icon, label, tooltip }) =
 };
 
 export function AppSidebar() {
+  const router = useRouter(); // Initialize router
+
+  const handleLogout = () => {
+    console.log("Logout clicked");
+    // Add actual logout logic here (e.g., clearing auth tokens, redirecting)
+    router.push('/login'); // Redirect to login page after logout
+  };
+
   return (
     <Sidebar variant="sidebar" collapsible="icon" side="left" className="border-r">
       <SidebarHeader className="items-center justify-between p-3">
@@ -103,8 +112,8 @@ export function AppSidebar() {
               <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              {/* <LogOut className="mr-2 h-4 w-4" /> */}
+            <DropdownMenuItem onClick={handleLogout}> {/* Add onClick handler */}
+              <LogOut className="mr-2 h-4 w-4" /> {/* Add LogOut icon */}
               <span>Log out</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
