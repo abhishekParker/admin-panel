@@ -81,10 +81,10 @@ export default function AddUserPage() {
   return (
     <AppLayout>
       <Header />
-      <div className="p-4 md:p-6 lg:p-8">
+      <div className="p-4 md:p-6 lg:p-8 w-full"> {/* Added w-full */}
         <h1 className="text-3xl font-bold mb-6 text-primary">Add New User</h1>
 
-        <Card className="w-full"> {/* Added w-full */}
+        <Card className="w-full"> {/* Already has w-full */}
           <CardHeader>
             <CardTitle>User Information</CardTitle>
             <CardDescription>Fill in the details for the new user.</CardDescription>

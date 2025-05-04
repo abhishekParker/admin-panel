@@ -122,7 +122,7 @@ export default function EditUserPage() {
   return (
     <AppLayout>
       <Header />
-      <div className="p-4 md:p-6 lg:p-8">
+      <div className="p-4 md:p-6 lg:p-8 w-full"> {/* Added w-full */}
          <div className="flex items-center justify-between mb-6">
           <Button variant="outline" onClick={() => router.back()} size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back
@@ -133,13 +133,13 @@ export default function EditUserPage() {
         </div>
 
         {userNotFound ? (
-           <Card className="w-full"> {/* Added w-full */}
+           <Card className="w-full"> {/* Already has w-full */}
              <CardContent className="p-6 text-center text-muted-foreground">
                User not found or could not be loaded.
              </CardContent>
            </Card>
          ) : (
-            <Card className="w-full"> {/* Added w-full */}
+            <Card className="w-full"> {/* Already has w-full */}
               <CardHeader>
                 <CardTitle>Update User Information</CardTitle>
                 <CardDescription>Modify the details for the user.</CardDescription>

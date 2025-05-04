@@ -65,7 +65,7 @@ export default function ViewUserPage() {
   return (
     <AppLayout>
       <Header />
-      <div className="p-4 md:p-6 lg:p-8">
+      <div className="p-4 md:p-6 lg:p-8 w-full"> {/* Added w-full */}
         <div className="flex items-center justify-between mb-6">
            <Button variant="outline" onClick={() => router.back()} size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back
@@ -80,7 +80,7 @@ export default function ViewUserPage() {
           )}
         </div>
 
-        <Card className="w-full"> {/* Added w-full */}
+        <Card className="w-full"> {/* Already has w-full */}
           <CardHeader>
             <CardTitle>User Information</CardTitle>
             <CardDescription>Detailed view of the selected user.</CardDescription>
