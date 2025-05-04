@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useTheme } from "next-themes"; // Import useTheme
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { cn } from "@/lib/utils"; // Import cn utility
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
@@ -145,3 +146,4 @@ const FormItem = React.forwardRef<
   )
 })
 FormItem.displayName = "FormItem"
+
