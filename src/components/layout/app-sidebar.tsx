@@ -103,14 +103,22 @@ export function AppSidebar() {
           <DropdownMenuContent side="right" align="start" className="w-56">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
-            </DropdownMenuItem>
+            <Link href="/profile" passHref legacyBehavior>
+              <DropdownMenuItem asChild>
+                <a>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </a>
+              </DropdownMenuItem>
+            </Link>
+            <Link href="/settings" passHref legacyBehavior>
+              <DropdownMenuItem asChild>
+                <a>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </a>
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}> {/* Add onClick handler */}
               <LogOut className="mr-2 h-4 w-4" /> {/* Add LogOut icon */}
