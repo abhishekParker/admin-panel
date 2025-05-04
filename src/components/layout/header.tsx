@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar"; // Import SidebarTrigger for mobile toggle
 import { useSidebar } from "@/components/ui/sidebar"; // Import useSidebar hook
+import { ThemeToggleButton } from "@/components/theme-toggle-button"; // Import ThemeToggleButton
 
 export function Header() {
   const router = useRouter();
@@ -36,6 +37,9 @@ export function Header() {
 
       {/* Spacer to push user menu to the right */}
       <div className="flex-1"></div>
+
+      {/* Theme Toggle Button */}
+      <ThemeToggleButton />
 
       {/* User Dropdown Menu */}
       <DropdownMenu>
