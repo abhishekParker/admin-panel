@@ -87,13 +87,28 @@ export default function ViewUserPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {loading ? (
-              <>
-                <Skeleton className="h-6 w-1/4" />
-                <Skeleton className="h-5 w-1/2" />
-                <Skeleton className="h-5 w-1/3" />
-                <Skeleton className="h-5 w-1/5" />
-                <Skeleton className="h-5 w-1/3" />
-              </>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-1/5" />
+                  <Skeleton className="h-6 w-3/5" />
+                </div>
+                 <div className="space-y-2">
+                   <Skeleton className="h-4 w-1/5" />
+                   <Skeleton className="h-5 w-4/5" />
+                 </div>
+                 <div className="space-y-2">
+                   <Skeleton className="h-4 w-1/5" />
+                   <Skeleton className="h-5 w-1/4" />
+                 </div>
+                <div className="space-y-2">
+                   <Skeleton className="h-4 w-1/5" />
+                   <Skeleton className="h-6 w-1/4 rounded-full" />
+                 </div>
+                 <div className="space-y-2">
+                   <Skeleton className="h-4 w-1/5" />
+                   <Skeleton className="h-5 w-2/5" />
+                 </div>
+              </div>
             ) : user ? (
               <>
                 <div>
@@ -130,3 +145,4 @@ export default function ViewUserPage() {
     </AppLayout>
   );
 }
+
